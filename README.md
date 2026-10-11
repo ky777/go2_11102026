@@ -12,3 +12,8 @@ go mod init <git_server>/<account_name>/<repo_name>
 go work init
 ```
 После отработки команды будет создан файл: `go.work`
+
+3. Для добавления каталога, в котором расположен отдельный модуль, в рабочее пространство
+```
+go work use ./Lection1_JSON/
+```
