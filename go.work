@@ -1,3 +1,6 @@
 go 1.26.6
 
-use ./Lection1_JSON
+use (
+	./Lection1_JSON
+	./Lection2_Start_HTTP
+)
