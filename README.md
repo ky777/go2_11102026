@@ -1,4 +1,6 @@
 # go2_08122025
+Code Runner расщирение для VS code [.RUN](https://marketplace-visualstudio-com.translate.goog/items?itemName=formulahendry.code-runner&_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=sc)    
+REST Client расщирение для VS code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 
 1. Создание модуля в корне проекта
 ```
