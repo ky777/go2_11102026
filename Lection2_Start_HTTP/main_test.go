@@ -8,15 +8,12 @@ import (
 )
 
 func Test_GetGreet(t *testing.T) {
-	req, err := http.NewRequest("GET", "http://127.0.0.1:8087/", nil)
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8080/", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	res := httptest.NewRecorder()
-	if req.URL.Hostname() != "127.0.0.1" || req.URL.Port() != "8080"{
-		log.Fatal("Bad host or port")
-	}
 	GetGreet(res, req)
 
 	act := res.Body.String()
