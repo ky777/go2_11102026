@@ -1,6 +1,7 @@
 go 1.26.6
 
 use (
+	./Bankstore
 	./Lection1_JSON
 	./Lection2_Start_HTTP
 	./Lection3_BooksAPI
