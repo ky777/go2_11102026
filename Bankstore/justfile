@@ -46,7 +46,8 @@ sqlc:
 
 # Testing code
 test:
-    go test -v -cover -timeout 180s ./... -count=1
+    go test -v -cover -timeout 180s ./...
+    #go test -v -cover -timeout 180s ./... -count=1
 
 # Start backend server
 start:
