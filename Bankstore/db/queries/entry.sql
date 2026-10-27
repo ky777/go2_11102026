@@ -19,8 +19,7 @@ OFFSET $2;
 -- name: UpdateEntry :one
 UPDATE entries
 SET
-amount=$2, 
---account_id=$3, 
+amount=$2 
 WHERE id=$1
 RETURNING *;
 
