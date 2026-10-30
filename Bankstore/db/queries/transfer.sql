@@ -1,4 +1,4 @@
--- name: CreatTransfer :one
+-- name: CreateTransfer :one
 INSERT INTO transfers (
     from_account_id,
     to_account_id,
@@ -11,7 +11,7 @@ INSERT INTO transfers (
 SELECT * FROM transfers
 WHERE id=$1 LIMIT 1;
 
--- name: LisTransfers :many
+-- name: ListTransfers :many
 SELECT * FROM transfers
 WHERE 
       from_account_id = $1 OR

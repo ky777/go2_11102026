@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const creatTransfer = `-- name: CreatTransfer :one
+const createTransfer = `-- name: CreateTransfer :one
 INSERT INTO transfers (
     from_account_id,
     to_account_id,
@@ -19,14 +19,14 @@ INSERT INTO transfers (
 ) RETURNING id, from_account_id, to_account_id, amount, created_at
 `
 
-type CreatTransferParams struct {
+type CreateTransferParams struct {
 	FromAccountID int64 `json:"from_account_id"`
 	ToAccountID   int64 `json:"to_account_id"`
 	Amount        int64 `json:"amount"`
 }
 
-func (q *Queries) CreatTransfer(ctx context.Context, arg CreatTransferParams) (Transfer, error) {
-	row := q.db.QueryRow(ctx, creatTransfer, arg.FromAccountID, arg.ToAccountID, arg.Amount)
+func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error) {
+	row := q.db.QueryRow(ctx, createTransfer, arg.FromAccountID, arg.ToAccountID, arg.Amount)
 	var i Transfer
 	err := row.Scan(
 		&i.ID,
@@ -66,7 +66,7 @@ func (q *Queries) GetTransfer(ctx context.Context, id int64) (Transfer, error) {
 	return i, err
 }
 
-const lisTransfers = `-- name: LisTransfers :many
+const listTransfers = `-- name: ListTransfers :many
 SELECT id, from_account_id, to_account_id, amount, created_at FROM transfers
 WHERE 
       from_account_id = $1 OR
@@ -76,15 +76,15 @@ LIMIT $3
 OFFSET $4
 `
 
-type LisTransfersParams struct {
+type ListTransfersParams struct {
 	FromAccountID int64 `json:"from_account_id"`
 	ToAccountID   int64 `json:"to_account_id"`
 	Limit         int32 `json:"limit"`
 	Offset        int32 `json:"offset"`
 }
 
-func (q *Queries) LisTransfers(ctx context.Context, arg LisTransfersParams) ([]Transfer, error) {
-	rows, err := q.db.Query(ctx, lisTransfers,
+func (q *Queries) ListTransfers(ctx context.Context, arg ListTransfersParams) ([]Transfer, error) {
+	rows, err := q.db.Query(ctx, listTransfers,
 		arg.FromAccountID,
 		arg.ToAccountID,
 		arg.Limit,

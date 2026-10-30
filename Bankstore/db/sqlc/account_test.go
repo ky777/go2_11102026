@@ -6,42 +6,17 @@ package db
 import (
 	"Bankstore/utils"
 	"context"
-	"log"
-	"os"
 	"testing"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 )
-
-const (
-	dbSource = "postgresql://app_user:pswd@localhost:5432/bankdb?sslmode=disable"
-)
-
-// Глобальный контекст для работы с БД и тестами
-var ctx = context.Background()
-var testQueries *Queries
-
-func TestMain(m *testing.M) {
-	// соединение с бд
-	conn, err := pgx.Connect(ctx, dbSource)
-	if err != nil {
-		log.Fatal("can not connection to db", err)
-	}
-	//закрываем соединеие
-	defer conn.Close(ctx)
-	//Вызваем конструктор создания экзампляра типа Queries
-	testQueries = New(conn)
-	//Запускаем subtest(тесты) и итоговый код выполнения передаем в Exit()
-	os.Exit(m.Run())
-}
 
 func TestCreateAccount(t *testing.T) {
 	createRandomAccount(t)
 }
 func TestGetAccount(t *testing.T) {
 	account := createRandomAccountSimple(t)
-	a, err := testQueries.GetAccount(ctx, account.ID)
+	a, err := testQueries.GetAccount(context.Background(), account.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, a)
 
@@ -59,7 +34,7 @@ func TestListAccounts(t *testing.T) {
 		Limit:  10,
 		Offset: 0,
 	}
-	ls, err := testQueries.ListAccounts(ctx, arg)
+	ls, err := testQueries.ListAccounts(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, ls)
 	require.NotEqual(t, len(ls), 0, "Размер списка должен быть больше 0.")
@@ -73,7 +48,7 @@ func TestUpdateAccount(t *testing.T) {
 		ID:      account.ID,
 		Balance: account.Balance + 10,
 	}
-	ac, err := testQueries.UpdateAccount(ctx, arg)
+	ac, err := testQueries.UpdateAccount(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, ac)
 	require.Equal(t, account.ID, ac.ID, "Идентификаторы должны иметь одинакавые значения.")
@@ -83,9 +58,9 @@ func TestUpdateAccount(t *testing.T) {
 func TestDeleteAccount(t *testing.T) {
 
 	account := createRandomAccountSimple(t)
-	err := testQueries.DeleteAccount(ctx, account.ID)
+	err := testQueries.DeleteAccount(context.Background(), account.ID)
 	require.NoError(t, err)
-	_, errGet := testQueries.GetAccount(ctx, account.ID)
+	_, errGet := testQueries.GetAccount(context.Background(), account.ID)
 	require.Error(t, errGet)
 	require.Equal(t, errGet.Error(), "no rows in result set")
 }
@@ -97,7 +72,7 @@ func createRandomAccount(t *testing.T) Account {
 		Balance:  ra.Balance,
 		Currency: Currency(ra.Currency),
 	}
-	account, err := testQueries.CreateAccount(ctx, arg)
+	account, err := testQueries.CreateAccount(context.Background(), arg)
 
 	// Две проверки на результат работы CreateAccount
 	require.NoError(t, err)
@@ -120,7 +95,7 @@ func createRandomAccountSimple(t *testing.T) Account {
 		Balance:  ra.Balance,
 		Currency: Currency(ra.Currency),
 	}
-	account, err := testQueries.CreateAccount(ctx, arg)
+	account, err := testQueries.CreateAccount(context.Background(), arg)
 
 	// Две проверки на результат работы CreateAccount
 	require.NoError(t, err)

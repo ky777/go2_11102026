@@ -34,3 +34,51 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	}
 	return tx.Commit(ctx)
 }
+
+// Начинаем реаолизацию преревода через транзакцию
+// Входные параметры
+type TransferTxParams struct {
+	FromAccountID int64 `json:"from_account_id"`
+	ToAccountID   int64 `json:"to_account_id"`
+	Amount        int64 `json:"amount_id"`
+}
+
+// Выходные параметры
+type TransferTxResult struct {
+	Transfer     Transfer `json:"Transfer"`
+	FromAccoutID int64    `json:"from_account_id"`
+	ToAccountID  int64    `json:"to_account_id"`
+	FromEntry    Entry    `json:"from_entry"`
+	ToEntry      Entry    `json:"to_entry"`
+}
+
+func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+	var result TransferTxResult
+	err := store.execTx(ctx, func(q *Queries) error {
+		//Step 1. Create Transfer record
+		var err error
+		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams(arg))
+		if err != nil {
+			return err
+		}
+		//Step 2. Create two records
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.FromAccountID,
+			Amount:    -arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountID: arg.ToAccountID,
+			Amount:    arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+		// Step 3. Update account' s balance
+		// TODO
+		return nil
+	})
+	return result, err
+}
