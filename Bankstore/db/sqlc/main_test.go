@@ -14,15 +14,14 @@ const (
 )
 
 // Глобальный контекст для работы с БД и тестами
-//var ctx = context.Background()
 
 var testQueries *Queries
 var testDB *pgxpool.Pool
 
 func TestMain(m *testing.M) {
 	// соединение с бд
-	//conn, err := pgx.Connect(ctx, dbSource)
 	var err error
+	//testDB, err := pgxpool.New(context.Background(), dbSource)
 	testDB, err = pgxpool.New(context.Background(), dbSource)
 	if err != nil {
 		log.Fatal("can not connection to db", err)
