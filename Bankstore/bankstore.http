@@ -10,3 +10,7 @@ Content-Type: "application/json"
     "owner":"Petr",
     "currency": "USD"
 }
+### Create new account via curl
+curl -X POST http://127.0.0.1:8080/accounts \
+     -H "Content-Type: application/json" \
+     -d '{"owner":"John Doe","currency":"EUR"}' 
