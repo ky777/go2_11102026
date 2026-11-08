@@ -1,0 +1,12 @@
+@hostname=http://127.0.0.1
+@port=8080
+
+### Create new account
+
+POST {{hostname}}:{{port}}/accounts
+Content-Type: "application/json"
+
+{
+    "owner":"Petr",
+    "currency": "USD"
+}
