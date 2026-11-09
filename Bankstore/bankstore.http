@@ -14,3 +14,7 @@ Content-Type: "application/json"
 curl -X POST http://127.0.0.1:8080/accounts \
      -H "Content-Type: application/json" \
      -d '{"owner":"John Doe","currency":"EUR"}' 
+
+### GetAccount by id
+GET {{hostname}}:{{port}}/accounts/2
+Accept: application/json

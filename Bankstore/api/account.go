@@ -5,15 +5,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 )
 
-type CreateAccountRequest struct {
+type createAccountRequest struct {
 	Owner    string      `json:"owner" binding:"required"`
 	Currency db.Currency `json:"currency" binding:"required,oneof=USD EUR"`
 }
 
 func (server *Server) CreateAccount(ctx *gin.Context) {
-	var req CreateAccountRequest
+	var req createAccountRequest
 	// десериализация входящего JSON' а
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorRespons(err))
@@ -31,5 +32,27 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(http.StatusOK, account)
+}
+
+// URL : /account
+type GetAccountRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
+func (server *Server) GetAccount(ctx *gin.Context) {
+	var req GetAccountRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorRespons(err))
+		return
+	}
+	account, err := server.store.GetAccount(ctx, req.ID)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorRespons(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorRespons(err))
+	}
 	ctx.JSON(http.StatusOK, account)
 }
