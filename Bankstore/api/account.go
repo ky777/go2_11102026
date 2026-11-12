@@ -35,8 +35,9 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
-// URL : /account
 type GetAccountRequest struct {
+	// URL : /account/1
+	// use path(uri) paraneters
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
 
@@ -55,4 +56,30 @@ func (server *Server) GetAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorRespons(err))
 	}
 	ctx.JSON(http.StatusOK, account)
+}
+
+type ListAccountsRequest struct {
+	// URL: /accounts/?page_id=1&page_size=10
+	// use query parameters
+	PageID   int32 `form:"page_id" building:"required,min=1`
+	PageSize int32 `form:"page_size" building:"required,min=5,max=15`
+}
+
+func (server *Server) ListAccounts(ctx *gin.Context) {
+	var req ListAccountsRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusNotFound, errorRespons(err))
+		return
+	}
+	//make query to db
+	arg := db.ListAccountsParams{
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
+	accounts, err := server.store.ListAccounts(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorRespons(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, accounts)
 }

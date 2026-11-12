@@ -18,3 +18,7 @@ curl -X POST http://127.0.0.1:8080/accounts \
 ### GetAccount by id
 GET {{hostname}}:{{port}}/accounts/2
 Accept: application/json
+
+### Get Acconts 
+GET {{hostname}}:{{port}}/accounts/?page_id=2&page_size=5
+Accept: application/json
